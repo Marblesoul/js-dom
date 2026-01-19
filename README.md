@@ -1,5 +1,11 @@
 # Домашнее задание к занятию "2. DOM"
 
+[![Build and Deploy](https://github.com/Marblesoul/js-dom/actions/workflows/deploy.yml/badge.svg)](https://github.com/Marblesoul/js-dom/actions/workflows/deploy.yml)
+
+**Demo:** [https://marblesoul.github.io/js-dom/](https://marblesoul.github.io/js-dom/)
+
+---
+
 Правила сдачи задания:
 
 1. **Важно**: в рамках этого ДЗ можно использовать любой менеджер пакетов
