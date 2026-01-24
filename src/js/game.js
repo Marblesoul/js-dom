@@ -14,10 +14,10 @@ export function createBoard(container) {
     const cell = document.createElement('div');
     cell.className = 'game-cell';
     cell.dataset.index = i;
-    board.appendChild(cell);
+    board.append(cell);
   }
 
-  container.appendChild(board);
+  container.append(board);
   return board;
 }
 
@@ -44,8 +44,8 @@ export function moveGoblin(goblin, cells) {
   const newPosition = getRandomPosition(currentPosition);
   const targetCell = cells[newPosition];
 
-  // appendChild automatically moves the element (no need for removeChild)
-  targetCell.appendChild(goblin);
+  // append automatically moves the element (no need to remove it first)
+  targetCell.append(goblin);
   currentPosition = newPosition;
 
   return newPosition;
@@ -58,7 +58,7 @@ export function initGame(container) {
 
   // Place goblin in random initial position
   currentPosition = getRandomPosition(-1);
-  cells[currentPosition].appendChild(goblin);
+  cells[currentPosition].append(goblin);
 
   // Start moving goblin
   intervalId = setInterval(() => {

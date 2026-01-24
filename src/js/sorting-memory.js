@@ -55,11 +55,11 @@ export function renderTable(container, movies, sortField = null, sortDirection =
       th.classList.add(sortDirection === 'asc' ? 'sorted-asc' : 'sorted-desc');
     }
 
-    headerRow.appendChild(th);
+    headerRow.append(th);
   });
 
-  thead.appendChild(headerRow);
-  table.appendChild(thead);
+  thead.append(headerRow);
+  table.append(thead);
 
   // Create body with data-* attributes (same format as data-attributes version)
   const tbody = document.createElement('tbody');
@@ -78,11 +78,11 @@ export function renderTable(container, movies, sortField = null, sortDirection =
       <td>imdb: ${movie.imdb.toFixed(2)}</td>
     `;
 
-    tbody.appendChild(tr);
+    tbody.append(tr);
   });
 
-  table.appendChild(tbody);
-  container.appendChild(table);
+  table.append(tbody);
+  container.append(table);
 
   return table;
 }

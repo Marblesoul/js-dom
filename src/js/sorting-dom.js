@@ -34,11 +34,11 @@ export function generateTable(container) {
     const th = document.createElement('th');
     th.textContent = header;
     th.dataset.field = header;
-    headerRow.appendChild(th);
+    headerRow.append(th);
   });
 
-  thead.appendChild(headerRow);
-  table.appendChild(thead);
+  thead.append(headerRow);
+  table.append(thead);
 
   // Create body with data-* attributes
   const tbody = document.createElement('tbody');
@@ -57,11 +57,11 @@ export function generateTable(container) {
       <td>imdb: ${movie.imdb.toFixed(2)}</td>
     `;
 
-    tbody.appendChild(tr);
+    tbody.append(tr);
   });
 
-  table.appendChild(tbody);
-  container.appendChild(table);
+  table.append(tbody);
+  container.append(table);
 
   return table;
 }
@@ -88,7 +88,7 @@ export function sortByDataAttribute(table, field, direction) {
   });
 
   // Clear and re-append sorted rows
-  rows.forEach((row) => tbody.appendChild(row));
+  rows.forEach((row) => tbody.append(row));
 
   // Update header indicators
   const headers = table.querySelectorAll('th');

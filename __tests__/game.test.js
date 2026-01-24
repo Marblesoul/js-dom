@@ -77,7 +77,7 @@ describe('Game module', () => {
       const goblin = createGoblin();
 
       // Place goblin in first cell
-      cells[0].appendChild(goblin);
+      cells[0].append(goblin);
 
       // Move goblin
       const newPosition = moveGoblin(goblin, cells);
