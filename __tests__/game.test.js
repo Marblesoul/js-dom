@@ -2,88 +2,203 @@
  * @jest-environment jsdom
  */
 
-import {
-  createBoard,
-  getRandomPosition,
-  createGoblin,
-  moveGoblin,
-  BOARD_SIZE,
-} from '../src/js/game';
+import Board, { BOARD_SIZE } from '../src/js/game/Board';
+import Goblin from '../src/js/game/Goblin';
+import GameUI from '../src/js/game/GameUI';
+import Game from '../src/js/game/Game';
 
-describe('Game module', () => {
-  describe('createBoard', () => {
-    it('should create a board with 16 cells (4x4)', () => {
-      const container = document.createElement('div');
-      const board = createBoard(container);
+describe('Board', () => {
+  let container;
+  let board;
 
-      const cells = board.querySelectorAll('.game-cell');
-      expect(cells.length).toBe(BOARD_SIZE * BOARD_SIZE);
-    });
+  beforeEach(() => {
+    container = document.createElement('div');
+    board = new Board(container);
+    board.render();
+  });
 
-    it('should add board to container', () => {
-      const container = document.createElement('div');
-      createBoard(container);
+  it('should create 16 cells (4x4)', () => {
+    expect(board.cells.length).toBe(BOARD_SIZE * BOARD_SIZE);
+  });
 
-      expect(container.querySelector('.game-board')).not.toBeNull();
-    });
+  it('should add board element to container', () => {
+    expect(container.querySelector('.game-board')).not.toBeNull();
+  });
 
-    it('should assign data-index to each cell', () => {
-      const container = document.createElement('div');
-      const board = createBoard(container);
-      const cells = board.querySelectorAll('.game-cell');
-
-      cells.forEach((cell, index) => {
-        expect(cell.dataset.index).toBe(String(index));
-      });
+  it('should assign data-index to each cell', () => {
+    board.cells.forEach((cell, index) => {
+      expect(cell.dataset.index).toBe(String(index));
     });
   });
 
-  describe('getRandomPosition', () => {
-    it('should return a number between 0 and 15', () => {
-      for (let i = 0; i < 100; i++) {
-        const position = getRandomPosition(-1);
-        expect(position).toBeGreaterThanOrEqual(0);
-        expect(position).toBeLessThan(BOARD_SIZE * BOARD_SIZE);
-      }
-    });
-
-    it('should not return the excluded position', () => {
-      const excludePosition = 5;
-
-      for (let i = 0; i < 100; i++) {
-        const position = getRandomPosition(excludePosition);
-        expect(position).not.toBe(excludePosition);
-      }
-    });
+  it('getCell returns correct cell', () => {
+    expect(board.getCell(0)).toBe(board.cells[0]);
+    expect(board.getCell(15)).toBe(board.cells[15]);
   });
 
-  describe('createGoblin', () => {
-    it('should create an img element', () => {
-      const goblin = createGoblin();
-      expect(goblin.tagName).toBe('IMG');
-    });
+  it('onClick calls callback with cell index', () => {
+    const callback = jest.fn();
+    board.onClick(callback);
 
-    it('should have goblin class', () => {
-      const goblin = createGoblin();
-      expect(goblin.classList.contains('goblin')).toBe(true);
-    });
+    board.cells[7].click();
+    expect(callback).toHaveBeenCalledWith(7);
   });
 
-  describe('moveGoblin', () => {
-    it('should move goblin to a different cell', () => {
-      const container = document.createElement('div');
-      const board = createBoard(container);
-      const cells = board.querySelectorAll('.game-cell');
-      const goblin = createGoblin();
+  it('totalCells returns 16', () => {
+    expect(board.totalCells).toBe(16);
+  });
+});
 
-      // Place goblin in first cell
-      cells[0].append(goblin);
+describe('Goblin', () => {
+  let goblin;
 
-      // Move goblin
-      const newPosition = moveGoblin(goblin, cells);
+  beforeEach(() => {
+    goblin = new Goblin();
+  });
 
-      // Goblin should be in new cell
-      expect(cells[newPosition].contains(goblin)).toBe(true);
-    });
+  it('should create an img element with goblin class', () => {
+    expect(goblin.element.tagName).toBe('IMG');
+    expect(goblin.element.classList.contains('goblin')).toBe(true);
+  });
+
+  it('show places goblin in cell and sets position', () => {
+    const cell = document.createElement('div');
+    goblin.show(cell, 5);
+
+    expect(cell.contains(goblin.element)).toBe(true);
+    expect(goblin.position).toBe(5);
+  });
+
+  it('hide removes goblin from DOM and resets position', () => {
+    const cell = document.createElement('div');
+    goblin.show(cell, 3);
+    goblin.hide();
+
+    expect(cell.contains(goblin.element)).toBe(false);
+    expect(goblin.position).toBe(-1);
+  });
+
+  it('isAt returns correct result', () => {
+    const cell = document.createElement('div');
+    goblin.show(cell, 10);
+
+    expect(goblin.isAt(10)).toBe(true);
+    expect(goblin.isAt(5)).toBe(false);
+  });
+
+  it('getRandomPosition does not return excluded position', () => {
+    for (let i = 0; i < 100; i++) {
+      const pos = goblin.getRandomPosition(5, 16);
+      expect(pos).not.toBe(5);
+      expect(pos).toBeGreaterThanOrEqual(0);
+      expect(pos).toBeLessThan(16);
+    }
+  });
+});
+
+describe('GameUI', () => {
+  let container;
+  let ui;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    ui = new GameUI(container);
+    ui.render();
+  });
+
+  it('render creates start button', () => {
+    expect(container.querySelector('.game-button')).not.toBeNull();
+  });
+
+  it('render creates score and misses elements', () => {
+    expect(container.querySelector('.game-score')).not.toBeNull();
+    expect(container.querySelector('.game-misses')).not.toBeNull();
+  });
+
+  it('render creates hidden game-over overlay', () => {
+    const overlay = container.querySelector('.game-over-overlay');
+    expect(overlay).not.toBeNull();
+    expect(overlay.hidden).toBe(true);
+  });
+
+  it('updateScore changes score text', () => {
+    ui.updateScore(5);
+    expect(ui.scoreElement.textContent).toBe('Очки: 5');
+  });
+
+  it('updateMisses changes misses text', () => {
+    ui.updateMisses(3);
+    expect(ui.missesElement.textContent).toBe('Промахи: 3 / 5');
+  });
+
+  it('showGameOver displays overlay with score', () => {
+    ui.showGameOver(10);
+    expect(ui.overlay.hidden).toBe(false);
+    expect(ui.overlayScore.textContent).toBe('Ваш счёт: 10');
+  });
+
+  it('hideGameOver hides overlay', () => {
+    ui.showGameOver(10);
+    ui.hideGameOver();
+    expect(ui.overlay.hidden).toBe(true);
+  });
+});
+
+describe('Game (integration)', () => {
+  let container;
+  let game;
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    container = document.createElement('div');
+    game = new Game(container);
+    game.init();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('start resets score and misses', () => {
+    game.start();
+    expect(game.score).toBe(0);
+    expect(game.misses).toBe(0);
+    expect(game.isRunning).toBe(true);
+  });
+
+  it('clicking goblin cell increases score', () => {
+    game.start();
+    const pos = game.goblin.position;
+    game.board.cells[pos].click();
+
+    expect(game.score).toBe(1);
+  });
+
+  it('timeout increases misses', () => {
+    game.start();
+    jest.advanceTimersByTime(1000);
+
+    expect(game.misses).toBe(1);
+  });
+
+  it('5 misses end the game', () => {
+    game.start();
+
+    for (let i = 0; i < 5; i++) {
+      jest.advanceTimersByTime(1000);
+    }
+
+    expect(game.isRunning).toBe(false);
+    expect(game.misses).toBe(5);
+    expect(game.ui.overlay.hidden).toBe(false);
+  });
+
+  it('clicking empty cell does not change score', () => {
+    game.start();
+    const pos = game.goblin.position;
+    const emptyIndex = pos === 0 ? 1 : 0;
+    game.board.cells[emptyIndex].click();
+
+    expect(game.score).toBe(0);
   });
 });

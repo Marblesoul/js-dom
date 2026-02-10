@@ -1,5 +1,5 @@
 import './css/style.css';
-import { initGame } from './js/game';
+import { Game } from './js/game/index';
 import { initSortingDom } from './js/sorting-dom';
 import { initSortingMemory } from './js/sorting-memory';
 
@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Task 1: Goblin game
   const gameContainer = document.getElementById('game-container');
   if (gameContainer) {
-    initGame(gameContainer);
+    const game = new Game(gameContainer);
+    game.init();
   }
 
   // Task 2: Sorting with data-attributes

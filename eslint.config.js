@@ -12,6 +12,8 @@ module.exports = [
         console: 'readonly',
         setInterval: 'readonly',
         clearInterval: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
         module: 'readonly',
         require: 'readonly',
         __dirname: 'readonly',
@@ -20,6 +22,19 @@ module.exports = [
     rules: {
       'no-unused-vars': 'warn',
       'no-console': 'off',
+    },
+  },
+  {
+    files: ['__tests__/**/*.js'],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        jest: 'readonly',
+      },
     },
   },
   {
